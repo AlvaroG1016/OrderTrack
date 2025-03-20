@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using OrderTrack.Models.Domain;
+using OrderTrack.Services.Implementations;
+using OrderTrack.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +11,22 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program));
+
+
+var stringcConnection = builder.Configuration.GetConnectionString("OrderTrack");
+builder.Services.AddDbContext<OrdertrackContext>(data => data.UseSqlServer(stringcConnection));
+
+//Clases
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddTransient<IBulkDataService, BulkDataService>();
+builder.Services.AddTransient<ICargaDatosService, CargaDatosService>();
+builder.Services.AddTransient<IDataProcessingService, DataProcessingService>();
+builder.Services.AddTransient<IExcelService, ExcelService>();
+
+
+
 
 var app = builder.Build();
 

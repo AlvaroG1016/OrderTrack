@@ -5,7 +5,7 @@ using OrderTrack.Services.Interfaces;
 
 namespace OrderTrack.Services.Implementations
 {
-    public class CargaDatosService
+    public class CargaDatosService : ICargaDatosService
     {
         private readonly IMapper _mapper;
         private readonly IDataProcessingService _dataProcessingService;

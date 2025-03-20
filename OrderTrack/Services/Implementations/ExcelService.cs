@@ -19,7 +19,13 @@ namespace OrderTrack.Services.Implementations
             stream.Position = 0;
 
             using var reader = ExcelReaderFactory.CreateReader(stream);
-            var dataSet = reader.AsDataSet();
+            var dataSet = reader.AsDataSet(new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                {
+                    UseHeaderRow = true 
+                }
+            });
             var table = dataSet.Tables[0];
 
             var pedidos = new List<PedidoDto>();
@@ -30,21 +36,60 @@ namespace OrderTrack.Services.Implementations
 
             foreach (DataRow row in table.Rows)
             {
-                // Convertir valores con TryParse para evitar errores de conversión
-                int.TryParse(row[0]?.ToString(), out int pedidoId);
-                int.TryParse(row[1]?.ToString(), out int clienteId);
-                DateOnly.TryParse(row[2]?.ToString(), out DateOnly fechaPedido);
-                int.TryParse(row[3]?.ToString(), out int productoId);
-                int.TryParse(row[4]?.ToString(), out int cantidad);
-                decimal.TryParse(row[5]?.ToString(), out decimal precioUnitario);
-                string estadoEnvio = row[6]?.ToString() ?? "Desconocido";
-                DateOnly.TryParse(row[7]?.ToString(), out DateOnly fechaEntrega);
-                int.TryParse(row[8]?.ToString(), out int tiendaId);
-                string nombreTienda = row[9]?.ToString() ?? "No especificado";
-                string ubicacionTienda = row[10]?.ToString() ?? "No especificada";
-                int.TryParse(row[11]?.ToString(), out int novedadId);
-                string descripcion = row[12]?.ToString() ?? "Sin descripción";
-                DateTime.TryParse(row[13]?.ToString(), out DateTime fechaNovedad);
+                // TODO: Validar que los int, datetime devuelvan nulos y verificar en bd si recibe o no null y como manejarlos.
+                // DEBE retornar null para evitar valores inconsistentes
+
+                int.TryParse(row[1]?.ToString(), out int pedidoId);
+                TimeOnly.TryParse(row[2]?.ToString(), out TimeOnly horaPedido);
+                DateOnly.TryParse(row[3]?.ToString(), out DateOnly fechaPedido);
+                string nombreCliente = row[4]?.ToString() ?? "Cliente sin nombre";
+                string telefonoCliente = row[5]?.ToString() ?? "Cliente sin telefono";
+                string emailCliente = row[6]?.ToString() ?? "Cliente sin email";
+                string numeroGuia = row[9]?.ToString() ?? "Orden sin numero de guía";
+                string estadoPedido = row[10]?.ToString() ?? "Orden sin estado";
+                string tipoEnvio = row[11]?.ToString() ?? "Orden sin tipo de envío";
+                string departamentoDestino = row[12]?.ToString() ?? "Sin departamento destino";
+                string ciudadDestino = row[13]?.ToString() ?? "Sin ciudad destino";
+                string direccionDestino = row[14]?.ToString() ?? "Sin dirección destino";
+                string notas = row[15]?.ToString() ?? "Sin notas";
+                string transportadora = row[16]?.ToString() ?? "Sin transportadora";
+                decimal.TryParse(row[17]?.ToString(), out decimal precioTotal);
+                decimal.TryParse(row[18]?.ToString(), out decimal ganancia);
+                decimal.TryParse(row[19]?.ToString(), out decimal precioFlete);
+                decimal.TryParse(row[20]?.ToString(), out decimal costoDevolucionFlete);
+                decimal.TryParse(row[21]?.ToString(), out decimal comision);
+                int.TryParse(row[22]?.ToString(), out int porcentajeComision);
+                decimal.TryParse(row[23]?.ToString(), out decimal precioProovedor);
+                decimal.TryParse(row[24]?.ToString(), out decimal precioProovedorCantidad);
+                int.TryParse(row[25]?.ToString(), out int productoId);
+                string SKU = row[26]?.ToString() ?? "Sin SKU";
+                int.TryParse(row[27]?.ToString(), out int variacionProductoId);
+                string nombreProducto = row[28]?.ToString() ?? "Producto sin nombre";
+                string variacionProducto = row[29]?.ToString() ?? "";
+                int.TryParse(row[30]?.ToString(), out int cantidadProductos);
+                string novedad = row[31]?.ToString() ?? "";
+                string novedadSolucionada = row[32]?.ToString() ?? "";
+                TimeOnly.TryParse(row[33]?.ToString(), out TimeOnly horaNovedad);
+                DateOnly.TryParse(row[34]?.ToString(), out DateOnly fechaNovedad);
+                string solucion = row[35]?.ToString() ?? "";
+                TimeOnly.TryParse(row[36]?.ToString(), out TimeOnly horaSolucion);
+                DateOnly.TryParse(row[37]?.ToString(), out DateOnly fechaSolucion);
+                string observacion = row[38]?.ToString() ?? "";
+                TimeOnly.TryParse(row[39]?.ToString(), out TimeOnly horaUltimoMovimiento);
+                DateOnly.TryParse(row[40]?.ToString(), out DateOnly fechaUltimoMovimiento);
+                string ultimoMovimiento = row[41]?.ToString() ?? "";
+                string conceptoUltimoMovimiento = row[42]?.ToString() ?? "";
+                string ubicacionUltimoMovimiento = row[43]?.ToString() ?? "";
+                string vendedor = row[44]?.ToString() ?? "";
+                string tipoTienda = row[45]?.ToString() ?? "";
+                string tienda = row[46]?.ToString() ?? "";
+                int.TryParse(row[47]?.ToString(), out int idOrdenTienda);
+                int.TryParse(row[48]?.ToString(), out int numeroPedidoTienda);
+                string tags = row[49]?.ToString() ?? "";
+                DateOnly.TryParse(row[50]?.ToString(), out DateOnly fechaGuiaGenerada);
+
+
+
 
                 // Agregar a las listas
                 pedidos.Add(new PedidoDto { IdPedido = pedidoId, IdCliente = clienteId, FechaPedido = fechaPedido });
