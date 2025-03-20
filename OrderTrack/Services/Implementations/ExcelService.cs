@@ -33,6 +33,7 @@ namespace OrderTrack.Services.Implementations
             var logistica = new List<LogisticaDto>();
             var tiendas = new List<TiendaDto>();
             var novedades = new List<NovedadDto>();
+            var clientes = new List<ClienteDTO>();
 
             foreach (DataRow row in table.Rows)
             {
@@ -53,6 +54,7 @@ namespace OrderTrack.Services.Implementations
                 string direccionDestino = row[14]?.ToString() ?? "Sin dirección destino";
                 string notas = row[15]?.ToString() ?? "Sin notas";
                 string transportadora = row[16]?.ToString() ?? "Sin transportadora";
+
                 decimal.TryParse(row[17]?.ToString(), out decimal precioTotal);
                 decimal.TryParse(row[18]?.ToString(), out decimal ganancia);
                 decimal.TryParse(row[19]?.ToString(), out decimal precioFlete);
@@ -92,11 +94,16 @@ namespace OrderTrack.Services.Implementations
 
 
                 // Agregar a las listas
-                pedidos.Add(new PedidoDto { IdPedido = pedidoId, IdCliente = clienteId, FechaPedido = fechaPedido });
+                pedidos.Add(new PedidoDto { IdPedido = pedidoId, HoraPedido = horaPedido, FechaPedido = fechaPedido, Estado = estadoPedido });
                 detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, IdProducto = productoId, Cantidad = cantidad, PrecioUnitario = precioUnitario });
-                logistica.Add(new LogisticaDto { IdPedidoInterno = pedidoId, FechaGuiaGenerada= fechaEntrega });
+                logistica.Add(new LogisticaDto 
+                { IdPedidoInterno = pedidoId, NumeroGuia = numeroGuia, TipoEnvio = tipoEnvio,
+                  Departamento = departamentoDestino, Ciudad = ciudadDestino, Direccion = direccionDestino,
+                  Notas = notas,Transportadora = transportadora,
+                });
                 tiendas.Add(new TiendaDto { IdTienda = tiendaId, Tienda1 = nombreTienda});
                 novedades.Add(new NovedadDto { IdNovedad = novedadId, IdPedido = pedidoId});
+                clientes.Add(new ClienteDTO { Nombre = nombreCliente, Telefono = telefonoCliente, Email = emailCliente });
             }
 
 
