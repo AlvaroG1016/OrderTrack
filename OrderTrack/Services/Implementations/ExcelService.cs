@@ -7,7 +7,8 @@ namespace OrderTrack.Services.Implementations
 {
     public class ExcelService : IExcelService
     {
-        public async Task<(List<PedidoDto>, List<DetallePedidoDto>, List<LogisticaDto>, List<TiendaDto>, List<NovedadDto>)> LeerExcel(IFormFile file)
+        public async Task<(List<PedidoDto>, List<DetallePedidoDto>, List<LogisticaDto>, List<TiendaDto>, List<NovedadDto>,
+            List<ClienteDTO>, List<ProductoDTO>)> LeerExcel(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 throw new ArgumentException("El archivo es inválido.");
@@ -34,7 +35,7 @@ namespace OrderTrack.Services.Implementations
             var tiendas = new List<TiendaDto>();
             var novedades = new List<NovedadDto>();
             var clientes = new List<ClienteDTO>();
-
+            var productos = new List<ProductoDTO>();
             foreach (DataRow row in table.Rows)
             {
                 // TODO: Validar que los int, datetime devuelvan nulos y verificar en bd si recibe o no null y como manejarlos.
@@ -94,20 +95,35 @@ namespace OrderTrack.Services.Implementations
 
 
                 // Agregar a las listas
-                pedidos.Add(new PedidoDto { IdPedido = pedidoId, HoraPedido = horaPedido, FechaPedido = fechaPedido, Estado = estadoPedido });
-                detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, IdProducto = productoId, Cantidad = cantidad, PrecioUnitario = precioUnitario });
+                pedidos.Add(new PedidoDto { IdPedido = pedidoId, HoraPedido = horaPedido, FechaPedido = fechaPedido, Estado = estadoPedido,
+                    Notas = notas, Comision = comision, PtjComision = porcentajeComision, Vendedor = vendedor, IdOrdenTienda = idOrdenTienda,
+                    NumeroPedidoTienda = numeroPedidoTienda, Tags = tags,                    
+
+                });
+                detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, IdProducto = productoId, PrecioTotal = precioTotal,
+                Ganancia = ganancia, PrecioProovedor = precioProovedor, PrecioProovedorCantidad = precioProovedorCantidad,
+                Cantidad = cantidadProductos
+
+                });
                 logistica.Add(new LogisticaDto 
                 { IdPedidoInterno = pedidoId, NumeroGuia = numeroGuia, TipoEnvio = tipoEnvio,
-                  Departamento = departamentoDestino, Ciudad = ciudadDestino, Direccion = direccionDestino,
-                  Notas = notas,Transportadora = transportadora,
+                  Departamento = departamentoDestino, Ciudad = ciudadDestino, Direccion = direccionDestino
+                  ,Transportadora = transportadora, PrecioFlete = precioFlete, CostoDevolucionFlete = costoDevolucionFlete,
+                  HoraUltimoMov = horaUltimoMovimiento, FechaUltimoMov = fechaUltimoMovimiento, UltimoMovimiento = ultimoMovimiento,
+                  ConceptoUltimoMovimiento = conceptoUltimoMovimiento, UbicacionUltimoMovimiento = ubicacionUltimoMovimiento,
+                  FechaGuiaGenerada = fechaGuiaGenerada
                 });
-                tiendas.Add(new TiendaDto { IdTienda = tiendaId, Tienda1 = nombreTienda});
-                novedades.Add(new NovedadDto { IdNovedad = novedadId, IdPedido = pedidoId});
+                tiendas.Add(new TiendaDto { TipoTienda = tipoTienda, Tienda1 = tienda});
+                novedades.Add(new NovedadDto { Novedad = novedad, NovedadSolucionada = novedadSolucionada, HoraNovedad = horaNovedad, 
+                    FechaNovedad = fechaNovedad, Solucion = solucion, HoraSolucion = horaSolucion, FechaSolucion = fechaSolucion 
+                });
                 clientes.Add(new ClienteDTO { Nombre = nombreCliente, Telefono = telefonoCliente, Email = emailCliente });
+                productos.Add(new ProductoDTO { IdProductoExcel= productoId, Sku = SKU, Nombre = nombreProducto, VariacionId = variacionProductoId,
+                    VariacionProducto = variacionProducto });
             }
 
 
-            return (pedidos, detalles, logistica, tiendas, novedades);
+            return (pedidos, detalles, logistica, tiendas, novedades, clientes, productos);
         }
     }
 

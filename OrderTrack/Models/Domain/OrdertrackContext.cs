@@ -58,11 +58,8 @@ public partial class OrdertrackContext : DbContext
 
             entity.HasIndex(e => e.IdProducto, "idx_DetallePedidos_Producto");
 
-            entity.Property(e => e.CostoDevolucionFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Ganancia).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.PosibleCostoDevFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PosibleGanancia).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.PrecioFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioProovedor).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioProovedorCantidad).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioTotal).HasColumnType("decimal(18, 2)");
@@ -89,12 +86,14 @@ public partial class OrdertrackContext : DbContext
 
             entity.Property(e => e.Ciudad).HasMaxLength(50);
             entity.Property(e => e.ConceptoUltimoMovimiento).HasMaxLength(255);
+            entity.Property(e => e.CostoDevolucionFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Departamento).HasMaxLength(100);
             entity.Property(e => e.Direccion).HasMaxLength(100);
-            entity.Property(e => e.Notas).HasMaxLength(255);
             entity.Property(e => e.NumeroGuia)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.PosibleCostoDevFlete).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PrecioFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.TipoEnvio).HasMaxLength(100);
             entity.Property(e => e.Transportadora).HasMaxLength(100);
             entity.Property(e => e.UbicacionUltimoMovimiento).HasMaxLength(255);
@@ -125,7 +124,9 @@ public partial class OrdertrackContext : DbContext
 
             entity.HasIndex(e => e.FechaPedido, "idx_Pedidos_Fecha");
 
+            entity.Property(e => e.Comision).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Estado).HasMaxLength(100);
+            entity.Property(e => e.Notas).HasMaxLength(255);
             entity.Property(e => e.Tags).HasMaxLength(255);
             entity.Property(e => e.Vendedor).HasMaxLength(100);
 

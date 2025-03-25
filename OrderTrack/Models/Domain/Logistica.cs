@@ -23,13 +23,21 @@ public partial class Logistica
 
     public string? Direccion { get; set; }
 
-    public string? Notas { get; set; }
-
     public string? Transportadora { get; set; }
 
     public string? ConceptoUltimoMovimiento { get; set; }
 
     public string? UltimoMovimiento { get; set; }
+
+    public decimal? PrecioFlete { get; set; }
+
+    public TimeOnly? HoraUltimoMov { get; set; }
+
+    public DateOnly? FechaUltimoMov { get; set; }
+
+    public decimal? CostoDevolucionFlete { get; set; }
+
+    public decimal? PosibleCostoDevFlete { get; set; }
 
     public virtual Pedido IdPedidoInternoNavigation { get; set; } = null!;
 }

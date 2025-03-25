@@ -22,11 +22,5 @@
 
         public decimal? PrecioProovedorCantidad { get; set; }
 
-        public decimal? PrecioFlete { get; set; }
-
-        public decimal? CostoDevolucionFlete { get; set; }
-
-        public decimal? PosibleCostoDevFlete { get; set; }
-
     }
 }

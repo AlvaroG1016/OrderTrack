@@ -20,24 +20,30 @@ namespace OrderTrack.Services.Implementations
         {
             // 🚀 Deshabilitar índices antes de borrar
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_Pedidos_Fecha ON Pedidos DISABLE;");
-            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Pedido ON DetallePedidos DISABLE;");
-            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Producto ON DetallePedidos DISABLE;");
+            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Pedido ON DetallePedido DISABLE;");
+            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Producto ON DetallePedido DISABLE;");
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_Logistica_Pedido ON Logistica DISABLE;");
 
-            await _context.Database.ExecuteSqlRawAsync("DELETE FROM DetallePedidos;");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM DetallePedido;");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Pedidos;");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Logistica;");
+            //await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tiendas;");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Novedades;");
 
             // 🛠 Opcional: Reiniciar los IDs autoincrementales
-            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('DetallePedidos', RESEED, 0);");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('DetallePedido', RESEED, 0);");
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Pedidos', RESEED, 0);");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Logistica', RESEED, 0);");
+            //await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Tiendas', RESEED, 0);");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Novedades', RESEED, 0);");
 
         }
 
         public async Task ReconstruirIndices()
         {
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_Pedidos_Fecha ON Pedidos REBUILD;");
-            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Pedido ON DetallePedidos REBUILD;");
-            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Producto ON DetallePedidos REBUILD;");
+            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Pedido ON DetallePedido REBUILD;");
+            await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Producto ON DetallePedido REBUILD;");
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_Logistica_Pedido ON Logistica REBUILD;");
         }
     }

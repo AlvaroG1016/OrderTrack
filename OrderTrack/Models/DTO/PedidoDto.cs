@@ -23,5 +23,11 @@
         public string? Tags { get; set; }
 
         public int IdCliente { get; set; }
+
+        public string? Notas { get; set; }
+
+        public decimal? Comision { get; set; }
+
+        public int? PtjComision { get; set; }
     }
 }
