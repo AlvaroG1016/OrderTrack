@@ -100,9 +100,9 @@ namespace OrderTrack.Services.Implementations
                     NumeroPedidoTienda = numeroPedidoTienda, Tags = tags,                    
 
                 });
-                detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, IdProducto = productoId, PrecioTotal = precioTotal,
+                detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, PrecioTotal = precioTotal,
                 Ganancia = ganancia, PrecioProovedor = precioProovedor, PrecioProovedorCantidad = precioProovedorCantidad,
-                Cantidad = cantidadProductos
+                Cantidad = cantidadProductos, SKUTemp = SKU 
 
                 });
                 logistica.Add(new LogisticaDto 
@@ -118,6 +118,7 @@ namespace OrderTrack.Services.Implementations
                     FechaNovedad = fechaNovedad, Solucion = solucion, HoraSolucion = horaSolucion, FechaSolucion = fechaSolucion 
                 });
                 clientes.Add(new ClienteDTO { Nombre = nombreCliente, Telefono = telefonoCliente, Email = emailCliente });
+
                 productos.Add(new ProductoDTO { IdProductoExcel= productoId, Sku = SKU, Nombre = nombreProducto, VariacionId = variacionProductoId,
                     VariacionProducto = variacionProducto });
             }

@@ -22,5 +22,7 @@
 
         public decimal? PrecioProovedorCantidad { get; set; }
 
+        public string? SKUTemp { get; set; }
+
     }
 }

@@ -27,15 +27,23 @@ namespace OrderTrack.Services.Implementations
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM DetallePedido;");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Pedidos;");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Logistica;");
-            //await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tiendas;");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tiendas;");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Novedades;");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM productos;");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Clientes;");
+
+
 
             // 🛠 Opcional: Reiniciar los IDs autoincrementales
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('DetallePedido', RESEED, 0);");
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Pedidos', RESEED, 0);");
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Logistica', RESEED, 0);");
-            //await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Tiendas', RESEED, 0);");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Tiendas', RESEED, 0);");
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Novedades', RESEED, 0);");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Productos', RESEED, 0);");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Clientes', RESEED, 0);");
+
+
 
         }
 
