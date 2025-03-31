@@ -86,7 +86,7 @@ namespace OrderTrack.Services.Implementations
                 string vendedor = row[44]?.ToString() ?? "";
                 string tipoTienda = row[45]?.ToString() ?? "";
                 string tienda = row[46]?.ToString() ?? "";
-                int.TryParse(row[47]?.ToString(), out int idOrdenTienda);
+                string idOrdenTienda = row[47]?.ToString() ?? "";
                 int.TryParse(row[48]?.ToString(), out int numeroPedidoTienda);
                 string tags = row[49]?.ToString() ?? "";
                 DateOnly.TryParse(row[50]?.ToString(), out DateOnly fechaGuiaGenerada);
@@ -97,12 +97,12 @@ namespace OrderTrack.Services.Implementations
                 // Agregar a las listas
                 pedidos.Add(new PedidoDto { IdPedido = pedidoId, HoraPedido = horaPedido, FechaPedido = fechaPedido, Estado = estadoPedido,
                     Notas = notas, Comision = comision, PtjComision = porcentajeComision, Vendedor = vendedor, IdOrdenTienda = idOrdenTienda,
-                    NumeroPedidoTienda = numeroPedidoTienda, Tags = tags,                    
+                    NumeroPedidoTienda = numeroPedidoTienda, Tags = tags, NombreTiendaTemp = tienda
 
                 });
                 detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, PrecioTotal = precioTotal,
                 Ganancia = ganancia, PrecioProovedor = precioProovedor, PrecioProovedorCantidad = precioProovedorCantidad,
-                Cantidad = cantidadProductos, SKUTemp = SKU 
+                Cantidad = cantidadProductos, SKUTemp = SKU, 
 
                 });
                 logistica.Add(new LogisticaDto 
@@ -113,7 +113,7 @@ namespace OrderTrack.Services.Implementations
                   ConceptoUltimoMovimiento = conceptoUltimoMovimiento, UbicacionUltimoMovimiento = ubicacionUltimoMovimiento,
                   FechaGuiaGenerada = fechaGuiaGenerada
                 });
-                tiendas.Add(new TiendaDto { TipoTienda = tipoTienda, Tienda1 = tienda});
+                tiendas.Add(new TiendaDto { TipoTienda = tipoTienda, NombreTienda = tienda});
                 novedades.Add(new NovedadDto { Novedad = novedad, NovedadSolucionada = novedadSolucionada, HoraNovedad = horaNovedad, 
                     FechaNovedad = fechaNovedad, Solucion = solucion, HoraSolucion = horaSolucion, FechaSolucion = fechaSolucion 
                 });

@@ -12,6 +12,9 @@ namespace OrderTrack.Services.Implementations
         private readonly IDataProcessingService _dataProcessingService;
         private readonly IBulkDataService _bulkDataService;
         private readonly IExcelService _excelService;
+        private readonly IProductosService _productosService;
+        private readonly IPedidoService _pedidoService;
+        private readonly ITiendasService _tiendasService;
         private readonly OrdertrackContext _context;
         private const int BATCH_SIZE = 10000; // Procesar en bloques de 10,000 registros
 
@@ -20,13 +23,19 @@ namespace OrderTrack.Services.Implementations
             IDataProcessingService dataProcessingService,
             IBulkDataService bulkDataService,
             IExcelService excelService,
-            OrdertrackContext context)
+            OrdertrackContext context,
+            IProductosService productosService,
+            IPedidoService pedidoService, 
+            ITiendasService tiendasService)
         {
             _mapper = mapper;
             _dataProcessingService = dataProcessingService;
             _bulkDataService = bulkDataService;
             _excelService = excelService;
             _context = context;
+            _productosService = productosService;
+            _pedidoService = pedidoService;
+            _tiendasService = tiendasService;
         }
 
         public async Task<string> ProcesarCarga(IFormFile file)
@@ -45,29 +54,26 @@ namespace OrderTrack.Services.Implementations
             var clientes = _mapper.Map<List<Cliente>>(clienteDto);
             var productos = _mapper.Map<List<Producto>>(productoDto);
 
-            var productosNoRepetidos = _bulkDataService.FiltrarProductosMemoria(productos);
-            var idProductosExistentes  = await _bulkDataService.GetProductosBD();
-            var productosNuevos = _bulkDataService.FiltrarProductosBD(productosNoRepetidos, idProductosExistentes);
+            var productosNoRepetidos = _productosService.FiltrarProductosMemoria(productos);
+            var tiendasUnicas = _tiendasService.FiltrarTiendasMemoria(tiendas);
+            var idProductosExistentes  = await _productosService.GetSKUProductosBD();
+            var productosNuevos = _productosService.FiltrarProductosBD(productosNoRepetidos, idProductosExistentes);
 
-            var detallesAsignados = new List<DetallePedidoDto>(detallesDto);
 
 
             //Insertar en orden, controlando dependencias
             await _bulkDataService.InsertarPorLotesAsync(clientes, BATCH_SIZE);
-            await _bulkDataService.InsertarPorLotesAsync(tiendas, BATCH_SIZE);
+            await _bulkDataService.InsertarPorLotesAsync(tiendasUnicas, BATCH_SIZE);
             await _bulkDataService.InsertarPorLotesAsync(pedidos, BATCH_SIZE);
-
-            var idPedidoMap = await _context.Pedidos
-             .Where(p => pedidos.Select(x => x.IdPedido).Contains(p.IdPedido))
-             .OrderBy(p => p.IdPedidoInterno) // Asegurar orden
-             .GroupBy(p => p.IdPedido)
-             .ToDictionaryAsync(g => g.Key, g => g.Select(p => p.IdPedidoInterno).ToList());
-
-
             await _bulkDataService.InsertarPorLotesAsync(logistica, BATCH_SIZE);
             await _bulkDataService.InsertarPorLotesAsync(productosNuevos, BATCH_SIZE);
 
-            var productoIdMap = await _bulkDataService.MapeoIdProducto(productosNuevos);
+            var todosProductos = await _productosService.GetAllProductos();
+
+            var productoIdMap = await _productosService.MapeoIdProducto(todosProductos);
+            var idPedidoMap = await _pedidoService.DiccionarioIdsPedidos(pedidos);
+            var idTiendaMap = await _tiendasService.MapeoIdTienda();
+            var detallesAsignados = new List<DetallePedidoDto>(detallesDto);
 
             foreach (var detalle in detallesDto)
             {
@@ -80,6 +86,19 @@ namespace OrderTrack.Services.Implementations
                 {
                     int index = detallesAsignados.Count % listaIdPedidos.Count;
                     detalle.IdPedidoInterno = listaIdPedidos[index];
+                }
+                var pedidoRelacionado = pedidosDto.FirstOrDefault(p => p.IdPedidoInterno == detalle.IdPedidoInterno);
+                if (pedidoRelacionado != null && idTiendaMap.TryGetValue(pedidoRelacionado.NombreTiendaTemp, out int nuevoIdTienda))
+                {
+                    pedidoRelacionado.IdTienda = nuevoIdTienda;
+                }
+            }
+
+            foreach (var pedido in pedidosDto)
+            {
+                if (idTiendaMap.TryGetValue(pedido.NombreTiendaTemp, out int nuevoIdTienda))
+                {
+                    pedido.IdTienda = nuevoIdTienda;
                 }
 
             }
@@ -96,3 +115,5 @@ namespace OrderTrack.Services.Implementations
         }
     }
 }
+
+

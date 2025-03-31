@@ -9,7 +9,7 @@ public partial class Tienda
 
     public string TipoTienda { get; set; } = null!;
 
-    public string Tienda1 { get; set; } = null!;
+    public string NombreTienda { get; set; } = null!;
 
     public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 }

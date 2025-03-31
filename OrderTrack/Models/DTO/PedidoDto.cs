@@ -12,7 +12,7 @@
 
         public int IdTienda { get; set; }
 
-        public int IdOrdenTienda { get; set; }
+        public string? IdOrdenTienda { get; set; }
 
         public long? NumeroPedidoTienda { get; set; }
 
@@ -29,5 +29,7 @@
         public decimal? Comision { get; set; }
 
         public int? PtjComision { get; set; }
+        public string? NombreTiendaTemp { get; set; }
+
     }
 }

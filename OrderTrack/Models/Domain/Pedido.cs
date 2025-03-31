@@ -15,7 +15,7 @@ public partial class Pedido
 
     public int IdTienda { get; set; }
 
-    public int IdOrdenTienda { get; set; }
+    public string IdOrdenTienda { get; set; } = null!;
 
     public long? NumeroPedidoTienda { get; set; }
 

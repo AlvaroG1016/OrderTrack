@@ -6,7 +6,7 @@
 
         public string TipoTienda { get; set; } = null!;
 
-        public string Tienda1 { get; set; } = null!;
+        public string NombreTienda { get; set; } = null!;
 
     }
 }

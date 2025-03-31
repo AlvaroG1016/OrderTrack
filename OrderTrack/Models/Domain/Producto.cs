@@ -9,10 +9,6 @@ public partial class Producto
 
     public string Nombre { get; set; } = null!;
 
-    public decimal? Precio { get; set; }
-
-    public string? Categoria { get; set; }
-
     public string? Sku { get; set; }
 
     public int? IdProductoExcel { get; set; }

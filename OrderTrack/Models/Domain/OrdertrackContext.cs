@@ -63,7 +63,6 @@ public partial class OrdertrackContext : DbContext
             entity.Property(e => e.PrecioProovedor).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioProovedorCantidad).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioTotal).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.PrecioUnitario).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.IdPedidoInternoNavigation).WithMany(p => p.DetallePedidos)
                 .HasForeignKey(d => d.IdPedidoInterno)
@@ -88,7 +87,6 @@ public partial class OrdertrackContext : DbContext
             entity.Property(e => e.ConceptoUltimoMovimiento).HasMaxLength(255);
             entity.Property(e => e.CostoDevolucionFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Departamento).HasMaxLength(100);
-            entity.Property(e => e.Direccion).HasMaxLength(100);
             entity.Property(e => e.NumeroGuia)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -126,6 +124,7 @@ public partial class OrdertrackContext : DbContext
 
             entity.Property(e => e.Comision).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Estado).HasMaxLength(100);
+            entity.Property(e => e.IdOrdenTienda).HasMaxLength(100);
             entity.Property(e => e.Notas).HasMaxLength(255);
             entity.Property(e => e.Tags).HasMaxLength(255);
             entity.Property(e => e.Vendedor).HasMaxLength(100);
@@ -145,9 +144,7 @@ public partial class OrdertrackContext : DbContext
         {
             entity.HasKey(e => e.IdProducto);
 
-            entity.Property(e => e.Categoria).HasMaxLength(100);
             entity.Property(e => e.Nombre).HasMaxLength(255);
-            entity.Property(e => e.Precio).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Sku)
                 .HasMaxLength(100)
                 .HasColumnName("SKU");
@@ -158,9 +155,7 @@ public partial class OrdertrackContext : DbContext
         {
             entity.HasKey(e => e.IdTienda);
 
-            entity.Property(e => e.Tienda1)
-                .HasMaxLength(50)
-                .HasColumnName("Tienda");
+            entity.Property(e => e.NombreTienda).HasMaxLength(50);
             entity.Property(e => e.TipoTienda)
                 .HasMaxLength(50)
                 .IsUnicode(false);
