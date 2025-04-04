@@ -27,6 +27,7 @@ builder.Services.AddTransient<IExcelService, ExcelService>();
 builder.Services.AddTransient<IProductosService, ProductosService>();
 builder.Services.AddTransient<IPedidoService, PedidoService>();
 builder.Services.AddTransient<ITiendasService, TiendasService>();
+builder.Services.AddTransient<IClienteService, ClienteService>();
 
 
 

@@ -30,6 +30,6 @@
 
         public int? PtjComision { get; set; }
         public string? NombreTiendaTemp { get; set; }
-
+        public string? NombreClienteTemp { get; set; }
     }
 }

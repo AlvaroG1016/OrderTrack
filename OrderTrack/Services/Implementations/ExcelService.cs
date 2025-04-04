@@ -97,7 +97,7 @@ namespace OrderTrack.Services.Implementations
                 // Agregar a las listas
                 pedidos.Add(new PedidoDto { IdPedido = pedidoId, HoraPedido = horaPedido, FechaPedido = fechaPedido, Estado = estadoPedido,
                     Notas = notas, Comision = comision, PtjComision = porcentajeComision, Vendedor = vendedor, IdOrdenTienda = idOrdenTienda,
-                    NumeroPedidoTienda = numeroPedidoTienda, Tags = tags, NombreTiendaTemp = tienda
+                    NumeroPedidoTienda = numeroPedidoTienda, Tags = tags, NombreTiendaTemp = tienda, NombreClienteTemp = nombreCliente
 
                 });
                 detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, PrecioTotal = precioTotal,
