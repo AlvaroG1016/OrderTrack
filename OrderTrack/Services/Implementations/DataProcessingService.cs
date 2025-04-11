@@ -18,7 +18,7 @@ namespace OrderTrack.Services.Implementations
 
         public async Task LimpiarBaseDeDatos()
         {
-            // 🚀 Deshabilitar índices antes de borrar
+            //  Deshabilitar índices antes de borrar
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_Pedidos_Fecha ON Pedidos DISABLE;");
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Pedido ON DetallePedido DISABLE;");
             await _context.Database.ExecuteSqlRawAsync("ALTER INDEX idx_DetallePedidos_Producto ON DetallePedido DISABLE;");
@@ -34,7 +34,7 @@ namespace OrderTrack.Services.Implementations
 
 
 
-            // 🛠 Opcional: Reiniciar los IDs autoincrementales
+            //  Opcional: Reiniciar los IDs autoincrementales
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('DetallePedido', RESEED, 0);");
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Pedidos', RESEED, 0);");
             await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Logistica', RESEED, 0);");

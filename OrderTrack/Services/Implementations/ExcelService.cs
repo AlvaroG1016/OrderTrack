@@ -102,7 +102,8 @@ namespace OrderTrack.Services.Implementations
                 });
                 detalles.Add(new DetallePedidoDto { IdPedidoInterno = pedidoId, PrecioTotal = precioTotal,
                 Ganancia = ganancia, PrecioProovedor = precioProovedor, PrecioProovedorCantidad = precioProovedorCantidad,
-                Cantidad = cantidadProductos, SKUTemp = SKU, 
+                Cantidad = cantidadProductos, SKUTemp = $"{SKU?.Trim().ToUpperInvariant()}-{productoId}", PrecioFlete = precioFlete
+, 
 
                 });
                 logistica.Add(new LogisticaDto 

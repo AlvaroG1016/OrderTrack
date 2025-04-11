@@ -58,8 +58,8 @@ namespace OrderTrack.Services.Implementations
             var pedidos = _mapper.Map<List<Pedido>>(pedidosDto);
 
             var productosNoRepetidos = _productosService.FiltrarProductosMemoria(productos);
-            var idProductosExistentes = await _productosService.GetSKUProductosBD();
-            var productosNuevos = _productosService.FiltrarProductosBD(productosNoRepetidos, idProductosExistentes);
+            var clavesProductosExistentes = await _productosService.GetClavesProductosBD();
+            var productosNuevos = _productosService.FiltrarProductosBD(productosNoRepetidos, clavesProductosExistentes);
 
             //NO BD
             var tiendasUnicas = _tiendasService.FiltrarTiendasMemoria(tiendas);

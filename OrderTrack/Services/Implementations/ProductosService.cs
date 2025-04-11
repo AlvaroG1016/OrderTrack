@@ -14,42 +14,60 @@ namespace OrderTrack.Services.Implementations
         }
 
 
-        public async Task<List<string?>> GetSKUProductosBD()
+        public async Task<List<string>> GetClavesProductosBD()
         {
-            var skusExistentes = await _context.Productos
-               .Select(p => p.Sku)
-               .ToListAsync();
+            var clavesExistentes = await _context.Productos
+                .Where(p => p.Sku != null && p.IdProductoExcel != null)
+                .Select(p => $"{p.Sku.Trim().ToUpperInvariant()}-{p.IdProductoExcel}")
+                .ToListAsync();
 
-            return skusExistentes;
+            return clavesExistentes;
         }
 
-        public List<Producto> FiltrarProductosBD(List<Producto> productos, List<string> skusExistentes)
+
+        public List<Producto> FiltrarProductosBD(List<Producto> productos, List<string> clavesExistentes)
         {
             var productosNuevos = productos
-               .Where(p => !skusExistentes.Contains(p.Sku))
-               .ToList();
+                .Where(p =>
+                    p.Sku != null &&
+                    p.IdProductoExcel != null &&
+                    !clavesExistentes.Contains($"{p.Sku.Trim().ToUpperInvariant()}-{p.IdProductoExcel}")
+                )
+                .ToList();
 
             return productosNuevos;
         }
 
+
+
         public List<Producto> FiltrarProductosMemoria(List<Producto> productos)
         {
             var productosUnicos = productos
-            .GroupBy(p => p.Sku)
-            .Select(g => g.First())
-            .ToList();
+                .Where(p => p.Sku != null && p.IdProductoExcel != null)
+                .GroupBy(p => $"{p.Sku.Trim().ToUpperInvariant()}-{p.IdProductoExcel}")
+                .Select(g => g.First())
+                .ToList();
 
             return productosUnicos;
         }
 
+
         public async Task<Dictionary<string, int>> MapeoIdProducto(List<Producto> productosNuevos)
         {
-            var productoIdMap = await _context.Productos
-                .Where(p => p.Sku != null && productosNuevos.Select(x => x.Sku).Contains(p.Sku))
-                .ToDictionaryAsync(p => p.Sku!, p => p.IdProducto); // El `!` indica que no será null
+            var clavesProductos = productosNuevos
+                .Where(p => p.Sku != null && p.IdProductoExcel != null)
+                .Select(p => $"{p.Sku.Trim().ToUpperInvariant()}-{p.IdProductoExcel}")
+                .ToList();
 
+            var productoIdMap = await _context.Productos
+                .Where(p => p.Sku != null && p.IdProductoExcel != null && clavesProductos.Contains(p.Sku + "-" + p.IdProductoExcel))
+                .ToDictionaryAsync(
+                    p => $"{p.Sku.Trim().ToUpperInvariant()}-{p.IdProductoExcel}",
+                    p => p.IdProducto
+                );
             return productoIdMap;
         }
+
 
         public async Task<List<Producto>> GetAllProductos()
         {

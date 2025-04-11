@@ -20,6 +20,8 @@
         public decimal? PrecioProovedorCantidad { get; set; }
 
         public string? SKUTemp { get; set; }
+        public decimal? PrecioFlete { get; set; }
+
 
 
     }
