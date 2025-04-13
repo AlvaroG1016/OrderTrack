@@ -60,9 +60,13 @@ public partial class OrdertrackContext : DbContext
 
             entity.Property(e => e.Ganancia).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PosibleGanancia).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PrecioFlete).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioProovedor).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioProovedorCantidad).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PrecioTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Utilidad)
+                .HasComputedColumnSql("(([PrecioTotal]-[PrecioProovedorCantidad])+[PrecioFlete])", true)
+                .HasColumnType("decimal(20, 2)");
 
             entity.HasOne(d => d.IdPedidoInternoNavigation).WithMany(p => p.DetallePedidos)
                 .HasForeignKey(d => d.IdPedidoInterno)

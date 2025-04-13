@@ -1,6 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderTrack.Models.Domain;
+using OrderTrack.Models.DTO.Request;
+using OrderTrack.Models.DTO.Response;
 using OrderTrack.Services.Interfaces;
+using System.Globalization;
+using System.Runtime.Intrinsics.Arm;
 
 namespace OrderTrack.Services.Implementations
 {
@@ -76,5 +80,43 @@ namespace OrderTrack.Services.Implementations
 
             return result;
         }
+        public async Task<List<AgrupacionProductosDto>> ObtenerProductosAgrupados(FiltroReporteProductosDto filtro)
+        {
+            var pedidos = await _context.DetallePedidos
+                .Include(dp => dp.IdProductoNavigation)
+                .Include(dp => dp.IdPedidoInternoNavigation)
+                .Where(dp =>
+                    dp.IdPedidoInternoNavigation.FechaPedido >= DateOnly.FromDateTime(filtro.FechaInicio) &&
+                    dp.IdPedidoInternoNavigation.FechaPedido <= DateOnly.FromDateTime(filtro.FechaFin))
+                .ToListAsync();
+
+            var agrupado = pedidos
+                .GroupBy(dp =>
+                {
+                    var fecha = dp.IdPedidoInternoNavigation.FechaPedido.ToDateTime(new TimeOnly(0, 0));
+                    return filtro.TipoAgrupacion == "mes"
+                        ? fecha.ToString("yyyy-MM")
+                        : $"{fecha.Year}-W{CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
+                            fecha, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}";
+                })
+                .Select(g => new AgrupacionProductosDto
+                {
+                    Agrupacion = g.Key,
+                    Productos = g.GroupBy(x => x.IdProductoNavigation.Nombre)
+                                 .Select(p => new ProductoVentaDto
+                                 {
+                                     NombreProducto = p.Key,
+                                     TotalVendido = p.Sum(x => x.Cantidad),
+                                     TotalIngresos = p.Sum(x => x.PrecioTotal)
+                                 })
+                                 .OrderByDescending(p => p.TotalVendido)  // Ordenar por más vendidos
+                                 .Take(3)                                  // Tomar solo los 3 primeros
+                                 .ToList()
+                }).ToList();
+
+            return agrupado;
+        }
+
+
     }
 }

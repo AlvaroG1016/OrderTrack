@@ -14,6 +14,21 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 
 
+var EmployeeSpecificOrigins = "_employeeAppSpecificOrigins";
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: EmployeeSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:4200")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
+
+
 var stringcConnection = builder.Configuration.GetConnectionString("OrderTrack");
 builder.Services.AddDbContext<OrdertrackContext>(data => data.UseSqlServer(stringcConnection));
 
@@ -45,6 +60,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors(EmployeeSpecificOrigins);
 
 app.MapControllers();
 

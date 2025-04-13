@@ -1,4 +1,6 @@
 ﻿using OrderTrack.Models.Domain;
+using OrderTrack.Models.DTO.Request;
+using OrderTrack.Models.DTO.Response;
 
 namespace OrderTrack.Services.Interfaces
 {
@@ -9,5 +11,6 @@ namespace OrderTrack.Services.Interfaces
         List<Producto> FiltrarProductosMemoria(List<Producto> productos);
         Task<Dictionary<string, int>> MapeoIdProducto(List<Producto> productosNuevos);
         Task<List<Producto>> GetAllProductos();
+        Task<List<AgrupacionProductosDto>> ObtenerProductosAgrupados(FiltroReporteProductosDto filtro);
     }
 }

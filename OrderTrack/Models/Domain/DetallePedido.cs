@@ -23,6 +23,10 @@ public partial class DetallePedido
 
     public decimal? PrecioProovedorCantidad { get; set; }
 
+    public decimal? PrecioFlete { get; set; }
+
+    public decimal? Utilidad { get; set; }
+
     public virtual Pedido IdPedidoInternoNavigation { get; set; } = null!;
 
     public virtual Producto IdProductoNavigation { get; set; } = null!;

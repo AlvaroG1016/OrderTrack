@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OrderTrack.Models.DTO.Request;
 using OrderTrack.Services.Interfaces;
 using OrderTrack.Utilities;
 
@@ -7,26 +8,28 @@ namespace OrderTrack.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class CargueDatosController : ControllerBase
+    public class ProductoController : ControllerBase
     {
-        private readonly ICargaDatosService _cargaDatosService;
+        private readonly IProductosService _service;
 
-        public CargueDatosController(ICargaDatosService cargaDatosService)
+        public ProductoController(IProductosService service)
         {
-            _cargaDatosService = cargaDatosService;
+            _service = service;
         }
 
-        [HttpPost()]
-        public async Task<IActionResult> CargarExcel(IFormFile file)
+        [HttpPost]
+        public async Task<IActionResult> ObtenerProductosAgrupados([FromBody] FiltroReporteProductosDto filtro)
         {
             try
             {
-                var resultado = await _cargaDatosService.ProcesarCarga(file);
+
+                var resultado = await _service.ObtenerProductosAgrupados(filtro);
                 return Ok(ResponseBuilder.BuildSuccessResponse(resultado));
             }
             catch (Exception ex)
             {
                 return BadRequest(ResponseBuilder.BuildErrorResponse(ex.Message));
+
             }
         }
     }
