@@ -8,7 +8,7 @@ namespace OrderTrack.Mappers
     {
         public ProductoProfile()
         {
-            CreateMap<ProductoDTO, Producto>();
+            CreateMap<ProductoDTO, Producto>().ReverseMap();
         }
     }
 }

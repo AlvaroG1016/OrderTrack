@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using OrderTrack.Models.Domain;
+using OrderTrack.Models.DTO;
 using OrderTrack.Models.DTO.Request;
 using OrderTrack.Models.DTO.Response;
 using OrderTrack.Services.Interfaces;
@@ -11,10 +13,15 @@ namespace OrderTrack.Services.Implementations
     public class ProductosService : IProductosService
     {
         private readonly OrdertrackContext _context;
+        private readonly IDatatableService _dtService;
+        private readonly IMapper _mapper;
 
-        public ProductosService(OrdertrackContext context)
+
+        public ProductosService(OrdertrackContext context, IDatatableService datatableService, IMapper mapper)
         {
             _context = context;
+            _dtService = datatableService;
+            _mapper = mapper;
         }
 
 
@@ -80,7 +87,8 @@ namespace OrderTrack.Services.Implementations
 
             return result;
         }
-        public async Task<List<AgrupacionProductosDto>> ObtenerProductosAgrupados(FiltroReporteProductosDto filtro)
+
+        public async Task<List<AgrupacionProductosDto>> ObtenerTresProductosSeller(FiltroReporteProductosDto filtro)
         {
             var pedidos = await _context.DetallePedidos
                 .Include(dp => dp.IdProductoNavigation)
@@ -116,7 +124,84 @@ namespace OrderTrack.Services.Implementations
 
             return agrupado;
         }
+        public async Task<List<UtilidadTotalDTO>> ObtenerTop10ProductosMayorUtilidad()
+        {
+            var pedidos = await _context.DetallePedidos
+                .Include(dp => dp.IdProductoNavigation)
+                .Include(dp => dp.IdPedidoInternoNavigation)
+                .ToListAsync();
 
+            // Obtener los 10 productos con mayor utilidad
+            var productosUtilidadTop10 = pedidos
+                .GroupBy(dp => dp.IdProductoNavigation.Nombre)
+                .Select(p => new UtilidadTotalDTO
+                {
+                    NombreProducto = p.Key,
+                    // La utilidad ya está calculada en la base de datos, solo la sumamos
+                    UtilidadTotal = p.Sum(x => x.Utilidad),
+                    // Calculamos el porcentaje de utilidad con respecto al precio del proveedor
+                    PorcentajeUtilidad = (p.Sum(x => x.Utilidad) / p.Sum(x => x.PrecioProovedorCantidad)) * 100
+                })
+                .OrderByDescending(p => p.UtilidadTotal)  // Ordenar por la utilidad total de cada producto
+                .Take(10)  // Tomar los 10 productos con mayor utilidad
+                .ToList();
+
+            return productosUtilidadTop10;
+        }
+
+
+        public async Task<PaginacionResponseDto<ProductoDTO>> ObtenerDatatableProductos(PaginacionRequestDto filtro)
+        {
+            var query = _context.Productos.AsQueryable();
+
+            // Aplicar filtros de búsqueda y ordenamiento
+            query = _dtService.AplicarFiltrosGenericos(query, filtro, new[] { "Nombre", "Sku", "IdProductoExcel" });
+
+            // Total antes de paginar
+            var total = await query.CountAsync();
+
+            // Aplicar paginado
+            var data = await query
+                .Skip((filtro.PageNumber - 1) * filtro.PageSize)
+                .Take(filtro.PageSize)
+                .ToListAsync();
+
+            // Mapear solo la página de resultados
+            var dataResponse = _mapper.Map<List<ProductoDTO>>(data);
+
+            return new PaginacionResponseDto<ProductoDTO>
+            {
+                TotalRows = total,
+                Data = dataResponse
+            };
+        }
+        public async Task<List<EstadoContadorDto>> ObtenerEstadosPorProductoAsync(int idProducto)
+        {
+            var existeProducto = await _context.Productos.AnyAsync(p => p.IdProducto == idProducto);
+            if (!existeProducto)
+            {
+                throw new Exception($"El producto con ID {idProducto} no existe.");
+            }
+            var resultado = await _context.DetallePedidos
+                .Where(dp => dp.IdProducto == idProducto)
+                .GroupBy(dp => dp.IdPedidoInternoNavigation.Estado)
+                .Select(g => new EstadoContadorDto
+                {
+                    Estado = g.Key,
+                    Total = g.Count()
+                })
+                .ToListAsync();
+
+            int totalGeneral = resultado.Sum(r => r.Total);
+
+            // Agregar el porcentaje a cada DTO
+            foreach (var item in resultado)
+            {
+                item.Porcentaje = (double)item.Total / totalGeneral * 100;
+            }
+
+            return resultado;
+        }
 
     }
 }

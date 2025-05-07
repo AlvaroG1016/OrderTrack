@@ -18,5 +18,10 @@
         public DateTime FechaFin { get; set; }
         public string TipoAgrupacion { get; set; } = "semana"; // o "mes"
     }
-
+    public class UtilidadTotalDTO 
+    {
+        public string NombreProducto { get; set; } = null!;
+        public decimal? UtilidadTotal { get; set; }
+        public decimal? PorcentajeUtilidad { get; set; }
+    }
 }

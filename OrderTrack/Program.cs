@@ -19,10 +19,10 @@ var EmployeeSpecificOrigins = "_employeeAppSpecificOrigins";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: EmployeeSpecificOrigins,
+    options.AddPolicy(name: "AllowAll",
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:4200")
+                          policy.AllowAnyOrigin()  // Permite cualquier origen
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
                       });
@@ -43,6 +43,7 @@ builder.Services.AddTransient<IProductosService, ProductosService>();
 builder.Services.AddTransient<IPedidoService, PedidoService>();
 builder.Services.AddTransient<ITiendasService, TiendasService>();
 builder.Services.AddTransient<IClienteService, ClienteService>();
+builder.Services.AddTransient<IDatatableService, DatatableService>();
 
 
 
@@ -60,7 +61,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.UseCors(EmployeeSpecificOrigins);
+app.UseCors("AllowAll");
 
 app.MapControllers();
 
